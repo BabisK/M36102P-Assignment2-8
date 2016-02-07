@@ -30,7 +30,7 @@ spreadsheets (columns assignment to students will be done in class). For each of
 these four univariate samples, that you will be assigned, you need to:
 
 First we read the data. I used the xlsx library to read the excel file, then
-picked each sheet and stored it in pdf format to allow easier access and storage
+picked each sheet and stored it in CSV format to allow easier access and storage
 to CVS. I use these csvs to load the data. My column is 5.
 
 \begin{lstlisting}
@@ -239,6 +239,37 @@ quantile(Y)
   
   \item Based on (a) and (b) search for the random variable that fits best the
   observed data.
+  
+  The data from column W looks like it could be from many distributions. After
+  some trial and errors and a few functions that search the parameters we have
+  found a distribution we cannot reject. It is plausible that the data of W come
+  from a Poisson distribution with $lambda=5.7$. The chi-squared test confirms
+  the hypothesis.
+  
+  \begin{lstlisting}
+t<-test.pois(W, 5.7)
+$p.value
+[1] 0.4662631
+
+$method
+[1] "Chi-squared test for given probabilities"
+  \end{lstlisting}
+  
+  The data from the X column are discrete with high probability on 0. Poison
+  seems like a good candidate but after some experimentation we find out that a
+  good choice is the nagative binomial with 1 succesfull trial and probability
+  0.7. The chi-squared test confirms this is a valid hypothesis:
+  
+  \begin{lstlisting}
+> quantiles <- seq(min(X),max(X))
+> distribution <-dnbinom(quant,size = 1,prob = 0.7)
+> chisq.test(x = c(table(X),0), p = c(distribution, 1-sum(distribution)))
+
+	Chi-squared test for given probabilities
+
+data:  c(table(X), 0)
+X-squared = 5.7176, df = 7, p-value = 0.5731
+  \end{lstlisting}
   
   The Y data set doesn't seem to be from a known distribution. The values though
   seem to be exponential. We will try to tranform the values and see what
